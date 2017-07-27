@@ -1,0 +1,136 @@
+<script>
+// ****************** FUNZIONE CHE RENDERIZZA LA TABELLA FILTRATA CON IL PLUG_IN DATATABLES ****************************
+    function renderTable(){
+    
+    
+      moment.locale(); 
+
+       $('#myTb').empty();
+
+        google.script.run
+        .withSuccessHandler(onReadData)
+        .readData()
+      }
+           
+      window.onReadData = function(dataObject){
+      
+      dataObject = JSON.parse(dataObject)
+      // estrae le proprietà dell'oggetto
+       var keys = [];
+           for(var key in dataObject.table[0]){
+              keys.push(key);
+           }
+       
+       console.log(keys)
+       
+      // dataObject.table[0]['Planimetrie'] = [1, 2];  
+      dataObject.table[0]['Planimetrie'] = [{titolo: 'pippo', link: 'http://www.google.com'}, {titolo: 'pippo', link: 'http://www.google.com'}, {titolo: 'pluto', link: 'http://www.aci.it'}, {titolo: 'paperino', link: 'http://www.google.com'}];  
+      
+      //console.log(JSON.stringify(dataObject))
+       
+       
+
+       
+        $(document).ready(function (){
+        
+        // ******* definisce la variabile "myTb" ***********************
+
+        var myTb = $('#myTb').DataTable({
+        
+        "oLanguage": {"sSearch": "Filtra : "},
+        
+        dom: 'Bfrltip',
+        
+        buttons: [
+        
+               { text: 'Inserisci nuova rilevazione', action: function (e, dt, node, conf) { window.open('https://docs.google.com/forms/d/e/1FAIpQLSdJgh7WGXJdX3nkjD9WtCo4n2wyprqsD3C66pHFBdw5v9JjSA/viewform', '_blank' );} },
+                'copyHtml5',                                                            
+                'excelHtml5',
+               { extend: 'csvHtml5', text: 'XLS', orientation: 'landscape', alignment: 'center', exportOptions: { columns: [ 0, 1, 2, 3, 4] } },
+               { extend: 'pdfHtml5', text: 'PDF', orientation: 'landscape', alignment: 'center', exportOptions: { columns: [ 0, 1, 2, 3, 4] }, 
+                   styles: { layout: 'lightHorizontalLines', tableHeader:{ fillColor:"#F0F8FF" }, }, },
+                ],
+              
+        columns: [
+        
+          { data: 'Update', title: "Modulo"},
+          { data: 'Personale', title: "Nominativo"},
+          { data: 'Codici Assenza', title: "Codici Assenza"},
+          { data: 'Giustificativo', title: "Giustificativo"},
+          { data: 'Data', title: "Data"},
+          { data: 'Note', title: "Note"},
+          { data: 'Maggior orario effettuato', title: "Maggior orario "},
+          { data: "Tipo maggior orario", title: "Tipo maggior orario"},
+          { data: "Motivazione straordinario", title: "Motivazione straordinario"},
+          //{ data: null, title: "Personale", className: 'details-control', orderable: false, searchable: false, defaultContent: '' },
+          //{ data: null, title: "Planimetria", className: 'details-control', orderable: false, searchable: false, defaultContent: '' },
+                
+          ],
+          
+        columnDefs: [
+
+        { targets: '_all', visible: true },
+        { targets: [0], render: function ( data, type, row) {
+            if(row.indexEditor == 0){
+              return '<button class="btn btn-outline btn-info waves-effect disabled">Modifica</button>'; }
+              else return '<a href='+data+' class="btn btn-outline btn-danger waves-effect" target="_blank">Modifica</a>';}
+              },
+        
+         
+         { targets: [4], render: function ( data, type, row) {
+              return moment(data).format( 'DD/MM/YYYY')
+              }
+         }
+         ],
+          
+          data: dataObject.table,
+          responsive: true,
+          scrollCollapse: true,
+          scrollY: 400,
+          paging: true,
+          paginationType: 'full',
+          order: [[ 3, 'asc' ],[ 2, 'asc' ]],
+          displayLength: 25,
+          lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+          autoWidth: true,
+          fixedColumns: { leftColumns: 2 }, 
+          
+          
+          })
+          
+         // fine definizione variabile myTb
+            
+//------------------------------
+         // Gestione Pulsante Child Row
+  
+          $('.dataTable').on('click', 'td.details-control', function () { console.log('ok');           
+          
+         //  console.log(this)
+            
+              var tr = $(this).closest('tr');
+              var th = $(this).closest('table').find('th').eq($(this).index());
+              var row = myTb.row( tr );
+ 
+              if ( row.child.isShown() ) {
+              console.log('row child is alredy shown')
+         // This row is already open - close it
+              row.child.hide();
+              tr.removeClass('shown');
+              }
+              else {
+         // Open this row
+             console.log(JSON.stringify(th.text()))
+              console.log('row child ' + 'of row ' + row + ' is not already shown')
+             if (th.text() == "Personale"){
+                  row.child(list(row.data())).show();
+                  tr.addClass('shown');                 
+                };
+               };
+                
+         // Fine Gestione Pulsante Child Row
+//------------------------------
+          });
+        });
+      };
+                
+</script>
