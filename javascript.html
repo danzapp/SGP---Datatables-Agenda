@@ -1,6 +1,8 @@
 <script>
 // ****************** FUNZIONE CHE RENDERIZZA LA TABELLA FILTRATA CON IL PLUG_IN DATATABLES ****************************
-    function renderTable(){
+
+   
+   function renderTable(){
     
     
       moment.locale(); 
@@ -37,13 +39,15 @@
 
         var myTb = $('#myTb').DataTable({
         
-        "oLanguage": {"sSearch": "Filtra : "},
+   
+
         
         dom: 'Bfrltip',
         
-        buttons: [
-        
+        buttons: [     
                { text: 'Inserisci nuova rilevazione', action: function (e, dt, node, conf) { window.open('https://docs.google.com/forms/d/e/1FAIpQLSdJgh7WGXJdX3nkjD9WtCo4n2wyprqsD3C66pHFBdw5v9JjSA/viewform', '_blank' );} },
+               { text: 'Produci foglio presenze e turni contact center', action: function (e, dt, node, conf) { window.open('https://script.google.com/a/macros/aci.it/s/AKfycbzxZYTqsOohZbz0OoMVA6vbS9Qjd_T2Sysbuek1uqHTy26WvL6j/exec', '_blank' );} },
+               { text: 'Visualizza Agenda su Calendar', action: function (e, dt, node, conf) { window.open(' https://sites.google.com/a/aci.it/sgp/home/segreteria/agenda/calendario', '_blank' );} },
                 'copyHtml5',                                                            
                 'excelHtml5',
                { extend: 'csvHtml5', text: 'XLS', orientation: 'landscape', alignment: 'center', exportOptions: { columns: [ 0, 1, 2, 3, 4] } },
@@ -70,30 +74,33 @@
         columnDefs: [
 
         { targets: '_all', visible: true },
-        { targets: [0], render: function ( data, type, row) {
+        { targets: 0, render: function ( data, type, row) {
             if(row.indexEditor == 0){
               return '<button class="btn btn-outline btn-info waves-effect disabled">Modifica</button>'; }
               else return '<a href='+data+' class="btn btn-outline btn-danger waves-effect" target="_blank">Modifica</a>';}
               },
         
          
-         { targets: [4], render: function ( data, type, row) {
-              return moment(data).format( 'DD/MM/YYYY')
+         { targets: 4, render: function ( data, type, row) {
+         console.log(JSON.stringify(row) + ' ' + type + ' ' + data)
+              return moment(data).format( 'YYYY/MM/DD')
               }
-         }
+         },
          ],
+         
           
           data: dataObject.table,
           responsive: true,
           scrollCollapse: true,
-          scrollY: 400,
+          scrollY: 600,
           paging: true,
           paginationType: 'full',
-          order: [[ 3, 'asc' ],[ 2, 'asc' ]],
-          displayLength: 25,
+          order: [[ 4, 'desc' ],[ 1, 'asc' ]],
+          displayLength: 50,
           lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
           autoWidth: true,
           fixedColumns: { leftColumns: 2 }, 
+          "oLanguage": {"sSearch": "Filtra : "},
           
           
           })
@@ -111,7 +118,7 @@
               var th = $(this).closest('table').find('th').eq($(this).index());
               var row = myTb.row( tr );
  
-              if ( row.child.isShown() ) {
+              if (row.child.isShown() ) {
               console.log('row child is alredy shown')
          // This row is already open - close it
               row.child.hide();
