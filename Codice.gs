@@ -29,7 +29,6 @@ function readData(){
 //var data = sheet.getRange(4,1,rows,cols).getValues()
 //// Logger.log(data)
 
-
 var data = sheet.getDataRange().getValues()
 var headers = data[0]
 var dataRawObjectsArray = ObjApp.rangeToObjectsNoCamel(data)
