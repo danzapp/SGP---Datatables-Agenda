@@ -1,19 +1,20 @@
 <script>
 // ****************** FUNZIONE CHE RENDERIZZA LA TABELLA FILTRATA CON IL PLUG_IN DATATABLES ****************************
     function renderTable(){
+    
+    
+      moment.locale(); 
 
        $('#myTb').empty();
 
         google.script.run
         .withSuccessHandler(onReadData)
         .readData()
-   }
+      }
+           
+      window.onReadData = function(dataObject){
       
-      function onReadData(dataObject){
-      
-      // parse necessario se l'oggetto viene restituito come JSON
       dataObject = JSON.parse(dataObject)
-
       // estrae le proprietà dell'oggetto
        var keys = [];
            for(var key in dataObject.table[0]){
@@ -22,7 +23,12 @@
        
        console.log(keys)
        
-       console.log ( dataObject.table[0])
+      // dataObject.table[0]['Planimetrie'] = [1, 2];  
+      dataObject.table[0]['Planimetrie'] = [{titolo: 'pippo', link: 'http://www.google.com'}, {titolo: 'pippo', link: 'http://www.google.com'}, {titolo: 'pluto', link: 'http://www.aci.it'}, {titolo: 'paperino', link: 'http://www.google.com'}];  
+      
+      //console.log(JSON.stringify(dataObject))
+       
+       
 
        
         $(document).ready(function (){
@@ -31,13 +37,17 @@
 
         var myTb = $('#myTb').DataTable({
         
+        "oLanguage": {"sSearch": "Filtra : "},
+        
         dom: 'Bfrltip',
         
         buttons: [
         
-               { text: 'Inserisci', action: function (e, dt, node, conf) { window.open('https://docs.google.com/a/aci.it/forms/d/1FAIpQLSfriiEbU_mRbucmkeBHw1juev-MepzVZpK1Gm-DLDTetXk37w/viewform', '_blank' );} },
-                'copyHtml5',                                                            
-                'excelHtml5',
+               {text: 'Inserisci nuova rilevazione', action: function (e, dt, node, conf) { window.open('https://docs.google.com/forms/d/e/1FAIpQLSdJgh7WGXJdX3nkjD9WtCo4n2wyprqsD3C66pHFBdw5v9JjSA/viewform', '_blank' );}},
+               {text: 'Produci foglio presenze e contact center', action: function (e, dt, node, conf) { window.open('https://script.google.com/a/macros/aci.it/s/AKfycbzxZYTqsOohZbz0OoMVA6vbS9Qjd_T2Sysbuek1uqHTy26WvL6j/exec', '_blank' );}},
+                 {text: 'Visualizza Agenda in Calendar', action: function (e, dt, node, conf) { window.open('https://sites.google.com/a/aci.it/sgp/home/segreteria/agenda/calendario', '_blank' );}},
+               'copyHtml5',                                                            
+               'excelHtml5',
                { extend: 'csvHtml5', text: 'XLS', orientation: 'landscape', alignment: 'center', exportOptions: { columns: [ 0, 1, 2, 3, 4] } },
                { extend: 'pdfHtml5', text: 'PDF', orientation: 'landscape', alignment: 'center', exportOptions: { columns: [ 0, 1, 2, 3, 4] }, 
                    styles: { layout: 'lightHorizontalLines', tableHeader:{ fillColor:"#F0F8FF" }, }, },
@@ -54,6 +64,8 @@
           { data: 'Maggior orario effettuato', title: "Maggior orario "},
           { data: "Tipo maggior orario", title: "Tipo maggior orario"},
           { data: "Motivazione straordinario", title: "Motivazione straordinario"},
+          //{ data: null, title: "Personale", className: 'details-control', orderable: false, searchable: false, defaultContent: '' },
+          //{ data: null, title: "Planimetria", className: 'details-control', orderable: false, searchable: false, defaultContent: '' },
                 
           ],
           
@@ -65,16 +77,12 @@
               return '<button class="btn btn-outline btn-info waves-effect disabled">Modifica</button>'; }
               else return '<a href='+data+' class="btn btn-outline btn-danger waves-effect" target="_blank">Modifica</a>';}
               },
-        { targets: [1], render: function ( data, type, row) {
-            if(data == ""){
-              return '<button class="btn btn-outline btn-info waves-effect" disabled>Modifica</button>'; }
-              else return '<a href='+data+' class="btn btn-outline btn-info waves-effect" target="_blank">Dettagli</a>';}
-              },   
-          { targets: [4], render: function ( data, type, row) {
-              return moment(data).format('YYYY/MM/DD')
+        
+         
+         { targets: [4], render: function ( data, type, row) {
+              return moment(data).format( 'DD/MM/YYYY')
               }
-        },
-       
+         }
          ],
           
           data: dataObject.table,
@@ -83,29 +91,28 @@
           scrollY: 400,
           paging: true,
           paginationType: 'full',
-          order: [[4, 'desc'],[ 2, 'asc' ]],
+          order: [[ 3, 'asc' ],[ 2, 'asc' ]],
           displayLength: 25,
           lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
           autoWidth: true,
           fixedColumns: { leftColumns: 2 }, 
           
           
-         })
+          })
           
-      
          // fine definizione variabile myTb
             
 //------------------------------
          // Gestione Pulsante Child Row
   
-          $('.dataTable').on('click', 'td.details-control', function () { 
-              
-
-              var classDetails = this.className
+          $('.dataTable').on('click', 'td.details-control', function () { console.log('ok');           
+          
+         //  console.log(this)
+            
               var tr = $(this).closest('tr');
               var th = $(this).closest('table').find('th').eq($(this).index());
               var row = myTb.row( tr );
-              var column = th.text()
+ 
               if ( row.child.isShown() ) {
               console.log('row child is alredy shown')
          // This row is already open - close it
@@ -114,14 +121,18 @@
               }
               else {
          // Open this row
-              console.log(classDetails)
+             console.log(JSON.stringify(th.text()))
               console.log('row child ' + 'of row ' + row + ' is not already shown')
-                  row.child(list(row.data(),column)).show();
+             if (th.text() == "Personale"){
+                  row.child(list(row.data())).show();
                   tr.addClass('shown');                 
-
+                };
                };
+                
+         // Fine Gestione Pulsante Child Row
+//------------------------------
           });
-       })
-     }
-
+        });
+      };
+                
 </script>
