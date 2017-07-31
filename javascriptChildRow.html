@@ -2,38 +2,39 @@
 // ***********************  funzione di formattazione delle Child Row *****************************
 /* Formatting function for row details - modify as you need */
 
-function list(d,column) {
+function list ( d ) {
     // `d` is the original data object for the row
-    //var column = 'Immagini'
-    console.log('viewDetail ' + column)
+  var divChildRow = '<table class="table table-responsive">'+             
+            '<tr>'+              
+              '<td>Personale assegnato:</td>'+
+              '<td>'+d["Totale personale assegnato"]+'</td>'+
+            '</tr>'+
+            '<tr>'+
+                '<td>Personale in produzione:</td>'+
+                '<td>'+d["Personale in produzione"]+'</td>'+
+            '</tr>'+
+            '</table>'
     
-    switch (column){
-    case "Personale":
-      var divChildRow = '<table class="table table-responsive">'+             
-                  '<tr>'+              
-                    '<td>Personale assegnato:</td>'+
-                    '<td>'+d["Totale personale assegnato"]+'</td>'+
-                  '</tr>'+
-                  '<tr>'+
-                      '<td>Personale in produzione:</td>'+
-                      '<td>'+d["Personale in produzione"]+'</td>'+
-                  '</tr>'+
-                  '</table>'
+    return divChildRow;
+}
+
+   function gallery ( d ) {  
    
-         return divChildRow;
-         break;
-     case "Immagini":
-     var immagini = d["Foto ufficio da allegare "].split(',')
-     
-     var divChildRow = ''
-     for (var i=0; i<immagini.length; i++){
-                    divChildRow = divChildRow + '<div class="gallery"> <a target="_blank" href="'+ immagini[i] +'"> <img src="'+ immagini[i] +'" alt="immagine ' + (i+1)+ '" width="300" height="200" ></a>'+'</div>'
-                 }
+            var divChildRow = '<table class="table table-striped table-bordered'+
+               
+              '<div class="table-responsive">'+
+                '<table class="table-striped table-bordered">'+
+                  '<tr class="table-headings" >'+
+                      '<td>Personale assegnato</td>'+
+                      '<td>Personale in produzione</td>'+
+                   '<tr>'+
+                    '<td>'+d["Totale personale assegnato"]+'</td>'+
+                    '<td>'+d["Personale in produzione"]+'</td>'+ 
+                  '</tr>'+
+                '</table>'+
+              '</div>'
+
             return divChildRow;
-       break;
-     default:
-     break;
-    }
-  }
+       }
        
 </script>

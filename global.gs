@@ -1,8 +1,5 @@
-// origine: https://docs.google.com/spreadsheets/d/1m1NvfWzbV6KEovzO2Uxti7uIha7Vd8gYkOCaZAHQTZA/edit#gid=1844564233
+// origine: https://docs.google.com/spreadsheets/d/1vJvjg-jssHkDZIo53KMddEP5wHE09QRcNHmiebC3k9s/edit#gid=1088779443
 
-
-// ss = SpreadsheetApp.openById('1m1NvfWzbV6KEovzO2Uxti7uIha7Vd8gYkOCaZAHQTZA')
-ss = SpreadsheetApp.openById('1De9nXti77aQc-IAfIP2PqpoVgcQuXDoG7u6PwCQDQ7s')
-//sheetname = 'semplificauto Rilevazioni'
-sheetname = 'Rilevazioni'
+ss = SpreadsheetApp.openById('1vJvjg-jssHkDZIo53KMddEP5wHE09QRcNHmiebC3k9s')
+sheetname = 'Agenda'
 sheet = ss.getSheetByName(sheetname)

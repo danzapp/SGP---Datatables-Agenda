@@ -17,47 +17,36 @@ function include(filename) {
 
 // *****************  LEGGE I DATI DALLO SHEET E RESTITUISCE UN OBJECT  *************
 
-function readDataOLD(){
+function readData(){
 
-var rows = sheet.getLastRow()-2
-// Logger.log(rows);
-var cols = sheet.getLastColumn()+1
-// Logger.log(cols);
-var headers = sheet.getRange(1,1,1,cols).getValues()
-// Logger.log(headers)
-var data = sheet.getRange(2,1,rows,cols).getValues()
-// Logger.log(data)
+
+//var rows = sheet.getLastRow()-2
+//// Logger.log(rows);
+//var cols = sheet.getLastColumn()+1
+//// Logger.log(cols);
+//var headers = sheet.getRange(1,1,1,cols).getValues()
+//// Logger.log(headers)
+//var data = sheet.getRange(4,1,rows,cols).getValues()
+//// Logger.log(data)
+
+
+var data = sheet.getDataRange().getValues()
+var headers = data[0]
+var dataRawObjectsArray = ObjApp.rangeToObjectsNoCamel(data)
+
+// elimina le prime 2 righe (awesome table)
+var dataObjectsArray = dataRawObjectsArray.filter(function(el){
+      return el.rowNum >2;
+})
+
 var currentUser = Session.getActiveUser().getEmail()
 // Logger.log(currentUser)
 
-
-var dataObjectsArray = [] //Object con un Array di Objects
-
-for (var i=0; i<rows; i++){ // per ogni riga 
-  
-var dataObjects = {} // inizializza un object
-  for (var j=0; j<cols; j++){ // per ogni colonna 
-  Object.defineProperty(dataObjects, headers[0][j], { // ne definisce le proprietà usando i nomi di colonna 
-    value: data[i][j], // e i valori usando i dati in tabella 
-    writable: true,
-    enumerable: true,
-    configurable: true
-    }); 
-  }  
-
-    // quando completa l'Object lo aggiunge all'array di Objects
  
-      var existingDate = dataObjects['Data rilevazione'] 
-      dataObjects['Data rilevazione'] = Utilities.formatDate(new Date(existingDate), "CET", "dd/MM/yyyy")
-      dataObjectsArray.push(dataObjects)
-//      Logger.log(dataObjects);
- 
-}
-  
 // ---------------------------------------------
 // controllo ruolo utente: viewer, editor, owner  
 // Logger.log(dataObjectsArray)  
-
+/*
 for (var i=0; i<dataObjectsArray.length; i++){
   if(currentUser == dataObjectsArray[i]['email proprietario']){
     dataObjectsArray[i].indexEditor = 1 ; 
@@ -67,8 +56,10 @@ for (var i=0; i<dataObjectsArray.length; i++){
     dataObjectsArray[i].indexEditor = 0; 
   }
 }
+*/
 
-Logger.log(dataObjectsArray)
+//Logger.log(dataObjectsArray)
+
 // ---------------------------------------------
   
 var mainObject = {  // quando completa l'array di Object costruisce l'oggetto Contenitore
@@ -76,6 +67,7 @@ var mainObject = {  // quando completa l'array di Object costruisce l'oggetto Co
       table: dataObjectsArray,
     };
 
- // Logger.log(mainObject);
- return mainObject  // il risultato viene restituito come Object e non come JSON stringify 
+ Logger.log(mainObject);
+ // return mainObject  // restituisce il risultato come Object
+ return JSON.stringify(mainObject)  // restituisce il risultato come JSON stringify va poi effettuato JSON.parse
 }
