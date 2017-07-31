@@ -1,7 +1,11 @@
 
-function readDataDaniele(){
+function readData(){
 
 var dataRilevazioni = sheet.getDataRange().getValues()
+
+// rimuove riga 2 e 3
+dataRilevazioni.splice(1,2)
+Logger.log (dataRilevazioni) 
 
 var sheetFotoSpazi = SpreadsheetApp.openByUrl('https://docs.google.com/a/aci.it/spreadsheets/d/1tuWo0RFwlHGsmSSimH9QahtzWdplkgghnTHdNwjjwGc/edit?usp=drive_web').getSheetByName('Foto spazi')
 var sheetPlanimetrie = SpreadsheetApp.openByUrl('https://docs.google.com/a/aci.it/spreadsheets/d/1tuWo0RFwlHGsmSSimH9QahtzWdplkgghnTHdNwjjwGc/edit?usp=drive_web').getSheetByName('Planimetrie')
@@ -13,11 +17,11 @@ var currentUser = Session.getActiveUser().getEmail()
 // Logger.log(currentUser)
 
 // modifica il formato della data di rilevazione
-var dataObjectsArray = ObjApp.rangeToObjects(dataRilevazioni) //Object con un Array di Objects
-dataObjectsArray.forEach(function(obj) { Utilities.formatDate(new Date(obj['Data Rilevazione']), "CET", "dd/MM/yyyy"); });
+var dataObjectsArray = ObjApp.rangeToObjectsNoCamel(dataRilevazioni) //Object con un Array di Objects
+//dataObjectsArray.forEach(function(obj) { Utilities.formatDate(new Date(obj['Data Rilevazione']), "CET", "dd/MM/yyyy"); });
 
-var fotoSpaziObjArray = ObjApp.rangeToObjects(fotoSpazi)
-var planimetrieObjArray = ObjApp.rangeToObjects(planimetrie)
+var fotoSpaziObjArray = ObjApp.rangeToObjectsNoCamel(fotoSpazi)
+var planimetrieObjArray = ObjApp.rangeToObjectsNoCamel(planimetrie)
 
 
 // ---------------------------------------------
@@ -58,7 +62,8 @@ var mainObject = {  // quando completa l'array di Object costruisce l'oggetto Co
     };
 
  // Logger.log(mainObject);
- return mainObject  // il risultato viene restituito come Object e non come JSON stringify 
+ // return mainObject  // il risultato viene restituito come Object 
+ return JSON.stringify(mainObject) // il risultato viene restituito come JSON e sarà necesario effettuare JSON.parse()
 }
 
 
