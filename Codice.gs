@@ -36,7 +36,7 @@ var dataRawObjectsArray = ObjApp.rangeToObjectsNoCamel(data)
 
 // elimina le prime 2 righe (awesome table)
 var dataObjectsArray = dataRawObjectsArray.filter(function(el){
-      return el.rowNum >2;
+      return el.rowNum >2 && el['Stato Richiesta'] != 'Annullata';
 })
 
 var currentUser = Session.getActiveUser().getEmail()
