@@ -82,7 +82,20 @@
          { targets: [4], render: function ( data, type, row) {
               return moment(data).format( 'YYYY/MM/DD')
               }
+         },
+         
+            
+         { targets: [6], render: function ( data, type, row) {
+               if(! data){ 
+                   return ''
+               }
+               else
+               {
+                     return moment(data).format( 'HH:MM')
+               }
+           }
          }
+                  
          ],
           
           data: dataObject.table,
